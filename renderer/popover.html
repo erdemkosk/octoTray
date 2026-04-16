@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' file: data: blob:;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OctoTray</title>
+    <link rel="stylesheet" href="popover.css" />
+  </head>
+  <body>
+    <div class="chrome">
+      <header class="top">
+        <div class="brand">
+          <img class="brand-logo" width="22" height="22" alt="" decoding="async" />
+          <span class="title">OctoTray</span>
+        </div>
+        <button type="button" id="btnClose" class="iconbtn" aria-label="Close">✕</button>
+      </header>
+
+      <section id="errorBox" class="banner err hidden">
+        <strong>Connection</strong>
+        <p id="errorText"></p>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <span class="label">Printer</span>
+          <span id="stateText" class="value state">—</span>
+        </div>
+        <div id="hostLine" class="muted small"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Temperatures</h2>
+        <div id="temps" class="temps"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Job</h2>
+        <p id="fileName" class="file">—</p>
+        <div class="progress-wrap">
+          <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="row spread">
+          <span id="progressPct" class="value">0%</span>
+          <span id="timeLine" class="muted small">—</span>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span id="pollLine" class="muted small"></span>
+      </footer>
+    </div>
+    <script src="popover.js"></script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+# Build installable OctoTray for macOS, Windows, and Linux on every push to main,
+# then publish a GitHub Release with all artifacts.
+#
+# Do not add repository secrets whose names start with GITHUB_ (GitHub forbids it).
+# This workflow uses the job token via github.token. Optionally set RELEASE_TOKEN
+# (PAT with repo contents write) if your org restricts the default token.
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: mac
+          - os: ubuntu-latest
+            target: linux
+          - os: windows-latest
+            target: win
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (${{ matrix.target }})
+        run: npx electron-builder --${{ matrix.target }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_SELECT: "false"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: octotray-${{ matrix.target }}
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.deb
+          if-no-files-found: warn
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version from package.json
+        id: pkg
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: octotray-*
+          merge-multiple: true
+
+      - name: List release files
+        run: find release-assets -type f -ls || true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.pkg.outputs.version }}-build.${{ github.run_number }}
+          name: OctoTray v${{ steps.pkg.outputs.version }} (build ${{ github.run_number }})
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: |
+            release-assets/**/*
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}

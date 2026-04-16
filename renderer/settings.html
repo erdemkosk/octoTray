@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OctoTray — Settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <header class="head">
+        <h1>OctoTray</h1>
+        <p class="sub">Connection is saved to your user folder. You can change it anytime from the tray menu.</p>
+      </header>
+
+      <form id="form" class="form">
+        <label class="field">
+          <span>OctoPrint URL</span>
+          <input id="baseUrl" type="url" placeholder="http://octopi.local" autocomplete="off" />
+          <small id="hintUrl" class="hint"></small>
+        </label>
+
+        <label class="field">
+          <span>API key</span>
+          <input id="apiKey" type="password" placeholder="Paste API key from OctoPrint" autocomplete="off" />
+          <small id="hintKey" class="hint"></small>
+        </label>
+
+        <label class="field">
+          <span>Poll interval (seconds)</span>
+          <input id="pollSec" type="number" min="2" max="300" step="1" />
+          <small id="hintPoll" class="hint">Between 2 and 300 seconds.</small>
+        </label>
+
+        <p id="savePath" class="path"></p>
+
+        <p id="message" class="message" role="status"></p>
+
+        <div class="actions">
+          <button type="button" id="btnCancel" class="btn ghost">Cancel</button>
+          <button type="submit" id="btnSave" class="btn primary">Save</button>
+        </div>
+      </form>
+    </main>
+    <script src="settings.js"></script>
+  </body>
+</html>
