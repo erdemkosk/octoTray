@@ -58,46 +58,12 @@ function loadConfig() {
     cfgPath: userDataPath,
     localCfgPath: localPath,
     pollIntervalMs,
-    openAtLogin: file.openAtLogin === true,
     envLocked: {
       url: !!envUrl,
       key: !!envKey,
       poll: !!envPoll,
     },
   };
-}
-
-const LOGIN_ITEM_DENIED_HINT =
-  'macOS blocked “open at login” (Operation not permitted). This is common when running from Terminal, Cursor, or npm start. Use the installed OctoTray.app from /Applications (or the .dmg release), then enable the checkbox again. You can also add OctoTray manually under System Settings → General → Login Items & Extensions.';
-
-function applyOpenAtLogin(enabled) {
-  const want = !!enabled;
-  try {
-    const cur = app.getLoginItemSettings();
-    if (cur.openAtLogin === want) return;
-  } catch {
-    // continue and try to apply
-  }
-  try {
-    app.setLoginItemSettings({
-      openAtLogin: want,
-      openAsHidden: true,
-    });
-  } catch (e) {
-    console.warn('[OctoTray] Login item:', e?.message || e);
-  }
-}
-
-function syncOpenAtLoginFromConfig() {
-  const want = loadConfig().openAtLogin;
-  let cur;
-  try {
-    cur = app.getLoginItemSettings().openAtLogin;
-  } catch {
-    cur = false;
-  }
-  if (cur === want) return;
-  applyOpenAtLogin(want);
 }
 
 async function octoFetch(url, apiKey) {
@@ -373,26 +339,16 @@ function registerIpc() {
 
   ipcMain.handle('octotray:settings-load', () => {
     const c = loadConfig();
-    let openAtLogin = c.openAtLogin;
-    try {
-      const li = app.getLoginItemSettings();
-      if (li && typeof li.openAtLogin === 'boolean') {
-        openAtLogin = li.openAtLogin;
-      }
-    } catch {
-      // ignore
-    }
     return {
       baseUrl: c.baseUrl,
       apiKey: c.apiKey,
       pollIntervalMs: c.pollIntervalMs,
-      openAtLogin,
       envLocked: c.envLocked,
       savePath: c.cfgPath,
     };
   });
 
-  ipcMain.handle('octotray:settings-save', async (_evt, payload) => {
+  ipcMain.handle('octotray:settings-save', (_evt, payload) => {
     const c = loadConfig();
     if (c.envLocked.url || c.envLocked.key || c.envLocked.poll) {
       return {
@@ -424,14 +380,11 @@ function registerIpc() {
       Math.max(MIN_POLL_MS, Number.isFinite(sec) && sec > 0 ? sec * 1000 : DEFAULT_POLL_MS)
     );
 
-    const openAtLogin = payload?.openAtLogin === true;
-
     const next = {
       ...readJsonFile(c.cfgPath),
       baseUrl,
       apiKey: String(payload?.apiKey || '').trim(),
       pollIntervalMs,
-      openAtLogin,
     };
 
     try {
@@ -441,24 +394,8 @@ function registerIpc() {
       return { ok: false, error: e.message || 'Write failed.' };
     }
 
-    applyOpenAtLogin(openAtLogin);
-
-    await new Promise((r) => setTimeout(r, 300));
-    let warning = null;
-    try {
-      const st = app.getLoginItemSettings();
-      if (openAtLogin && !st.openAtLogin) {
-        warning = LOGIN_ITEM_DENIED_HINT;
-      } else if (!openAtLogin && st.openAtLogin) {
-        warning =
-          'Preference saved as off. If OctoTray still starts at login, remove it under System Settings → General → Login Items & Extensions.';
-      }
-    } catch {
-      if (openAtLogin) warning = LOGIN_ITEM_DENIED_HINT;
-    }
-
     refreshTray();
-    return { ok: true, warning };
+    return { ok: true };
   });
 
   ipcMain.on('octotray:settings-close', () => {
@@ -480,7 +417,6 @@ function registerIpc() {
 
 app.whenReady().then(async () => {
   registerIpc();
-  syncOpenAtLoginFromConfig();
 
   if (process.platform === 'darwin') app.dock?.hide();
 

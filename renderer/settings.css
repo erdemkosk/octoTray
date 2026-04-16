@@ -78,38 +78,6 @@ body {
   cursor: not-allowed;
 }
 
-.field.check-row {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 10px;
-  cursor: pointer;
-  margin: 0;
-}
-
-.field.check-row input[type='checkbox'] {
-  width: auto;
-  margin: 3px 0 0;
-  flex-shrink: 0;
-  accent-color: var(--accent);
-}
-
-.field.check-row .check-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: normal;
-  color: var(--text);
-  line-height: 1.35;
-  margin: 0;
-}
-
-.login-hint {
-  margin: -6px 0 0;
-  line-height: 1.4;
-}
-
 .hint {
   display: block;
   margin-top: 5px;
@@ -137,12 +105,6 @@ body {
 
 .message.ok {
   color: #7fdcc1;
-}
-
-.message.warn {
-  color: #e6c06d;
-  font-size: 11px;
-  line-height: 1.45;
 }
 
 .message.err {

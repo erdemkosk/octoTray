@@ -1,7 +1,6 @@
 {
   "baseUrl": "http://octopi.local",
   "apiKey": "YOUR_API_KEY",
-  "pollIntervalMs": 5000,
-  "openAtLogin": false
+  "pollIntervalMs": 5000
 }
 

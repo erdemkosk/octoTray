@@ -45,7 +45,6 @@ On first run, open **Configure…** from the tray menu and set:
 | **OctoPrint URL** | e.g. `http://octopi.local` or `http://127.0.0.1:5000` (scheme added if omitted) |
 | **API key** | From OctoPrint: **Settings → API** |
 | **Poll interval** | Seconds between refreshes (2–300) |
-| **Launch at sign-in** | Starts OctoTray when you log in (uses the OS login-items API; you may still need to allow the app in **System Settings → Login Items** on macOS or **Startup apps** on Windows) |
 
 Settings are stored in the app **user data** directory (e.g. macOS: `~/Library/Application Support/octotray/config.json`). Environment variables **`OCTOPRINT_URL`**, **`OCTOPRINT_API_KEY`**, **`OCTOPRINT_POLL_MS`** override file settings when set.
 
