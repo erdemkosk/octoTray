@@ -1,6 +1,6 @@
 {
   "name": "octotray",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Electron tray app for OctoPrint status (temps, job, time)",
   "main": "main.js",
   "scripts": {
@@ -24,6 +24,13 @@
     "directories": {
       "output": "dist"
     },
+    "icon": "build/icon.png",
+    "extraResources": [
+      {
+        "from": "build/icon.png",
+        "to": "app-icon.png"
+      }
+    ],
     "files": [
       "main.js",
       "package.json",
