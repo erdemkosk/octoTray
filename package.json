@@ -1,6 +1,6 @@
 {
   "name": "octotray",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Electron tray app for OctoPrint status (temps, job, time)",
   "main": "main.js",
   "scripts": {
