@@ -33,6 +33,14 @@
           <small id="hintPoll" class="hint">Between 2 and 300 seconds.</small>
         </label>
 
+        <label class="field check-row" for="openAtLogin">
+          <input type="checkbox" id="openAtLogin" />
+          <span class="check-label">Launch OctoTray when you sign in to this computer</span>
+        </label>
+        <p id="hintLogin" class="hint login-hint">
+          On macOS, “open at login” often fails with <strong>Operation not permitted</strong> when you run via <strong>npm start</strong> or from an IDE—use the <strong>installed .app</strong> from a release build. Then allow OctoTray under System Settings → General → Login Items &amp; Extensions. On Windows, see Settings → Apps → Startup.
+        </p>
+
         <p id="savePath" class="path"></p>
 
         <p id="message" class="message" role="status"></p>
