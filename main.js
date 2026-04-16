@@ -181,17 +181,6 @@ function loadTrayImage() {
   return primary;
 }
 
-/** Path for BrowserWindow `icon` (Windows/Linux taskbar; macOS bundle icon comes from electron-builder). */
-function resolveAppWindowIcon() {
-  const dev = path.join(__dirname, 'build', 'icon.png');
-  const packed = path.join(process.resourcesPath, 'app-icon.png');
-  const p = app.isPackaged ? packed : dev;
-  if (fs.existsSync(p)) return p;
-  const fallback = path.join(__dirname, 'tray.png');
-  if (fs.existsSync(fallback)) return fallback;
-  return undefined;
-}
-
 function positionNearTray(win) {
   if (!tray) return;
   const b = tray.getBounds();
@@ -247,8 +236,6 @@ function togglePopover() {
     popOpts.vibrancy = 'under-window';
     popOpts.visualEffectState = 'active';
   }
-  const winIcon = resolveAppWindowIcon();
-  if (winIcon) popOpts.icon = winIcon;
   popoverWin = new BrowserWindow(popOpts);
 
   popoverWin.loadFile(path.join(__dirname, 'renderer', 'popover.html'));
@@ -274,7 +261,7 @@ function openSettingsWindow() {
   }
 
   const pre = path.join(__dirname, 'preload', 'settings-preload.js');
-  const settingsOpts = {
+  settingsWin = new BrowserWindow({
     width: 472,
     height: 468,
     resizable: false,
@@ -288,10 +275,7 @@ function openSettingsWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
-  };
-  const settingsIcon = resolveAppWindowIcon();
-  if (settingsIcon) settingsOpts.icon = settingsIcon;
-  settingsWin = new BrowserWindow(settingsOpts);
+  });
 
   settingsWin.loadFile(path.join(__dirname, 'renderer', 'settings.html'));
   settingsWin.once('ready-to-show', () => {
